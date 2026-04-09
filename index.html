@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Chronicles Idle Legends</title>
+  <style>
+    :root{--panel:rgba(11,15,36,.78);--line:rgba(146,185,255,.28);--txt:#e8f1ff;--muted:#9fb4d9;--gold:#ffd98b;--aqua:#5de6ff;--violet:#c18cff;--ok:#6cffbb;--danger:#ff8ba5}
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%;color:var(--txt);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;touch-action:manipulation;user-select:none;background:radial-gradient(1200px 700px at 15% -10%,#2e2a70 0%,transparent 70%),radial-gradient(1000px 700px at 95% 100%,#1b4d83 0%,transparent 70%),linear-gradient(135deg,#040611,#0a0f29 45%,#131642)}
+    .wrap{max-width:1240px;margin:0 auto;padding:14px;display:grid;gap:12px;grid-template-columns:1.15fr .85fr} @media (max-width:960px){.wrap{grid-template-columns:1fr;padding:10px}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;backdrop-filter:blur(8px);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+    .topbar{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px} @media (max-width:840px){.topbar{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    .stat{text-align:center;padding:9px 7px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03)} .k{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px} .v{font-size:1.08rem;font-weight:800;margin-top:3px}
+    .left,.right{display:grid;gap:10px;align-content:start}
+    .hero{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center}
+    .avatar{width:110px;height:110px;border-radius:15px;border:1px solid rgba(255,255,255,.25);box-shadow:0 0 30px rgba(126,180,255,.35),inset 0 0 35px rgba(255,255,255,.18);position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%,#fff 0%,#c6f2ff 20%,#6da2ff 50%,#2d1e65 100%)}
+    .avatar[data-skin="epica"]{background:radial-gradient(circle at 30% 20%,#fff 0%,#f0ceff 16%,#a872ff 52%,#25145d 100%)}
+    .avatar[data-skin="leggendaria"]{background:radial-gradient(circle at 30% 20%,#fff 0%,#fff5c8 14%,#ffb95a 50%,#4a1a00 100%)}
+    .avatar:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.35) 35%,transparent 58%);animation:shine 3.5s linear infinite} @keyframes shine{from{transform:translateX(-110%)}to{transform:translateX(120%)}}
+    .hero h1{margin:0;font-size:1.15rem} .hero p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
+    .avatar-emoji{position:absolute;inset:0;display:grid;place-items:center;font-size:3rem;z-index:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4));pointer-events:none}
+    .tap-zone{border-radius:16px;border:1px solid rgba(255,255,255,.22);min-height:200px;position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline:none;transition:box-shadow .2s ease,transform .12s ease;background:radial-gradient(ellipse 90% 80% at 50% 100%,rgba(40,20,90,.5) 0%,transparent 55%),linear-gradient(165deg,rgba(15,25,55,.9),rgba(30,15,60,.75));box-shadow:inset 0 0 60px rgba(120,200,255,.12),0 8px 32px rgba(0,0,0,.35)}
+    .tap-zone:focus-visible{box-shadow:0 0 0 3px rgba(93,230,255,.5),inset 0 0 60px rgba(120,200,255,.15)}
+    .tap-zone:active{transform:scale(.992)}
+    .tap-zone.tap-flash{animation:tapFlash .35s ease-out}
+    @keyframes tapFlash{0%{filter:brightness(1.35) saturate(1.2)}100%{filter:brightness(1) saturate(1)}}
+    .crystal-core{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(200px,55vw);height:min(200px,55vw);background:radial-gradient(circle at 35% 28%,#fff 0%,#a8f0ff 12%,#6b9dff 35%,#4a2d8c 68%,#1a0a35 100%);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);box-shadow:0 0 40px rgba(120,200,255,.55),0 0 80px rgba(180,100,255,.25),inset 0 -20px 40px rgba(0,0,0,.35);transition:transform .08s ease,filter .15s ease;pointer-events:none}
+    .tap-zone:active .crystal-core{transform:translate(-50%,-50%) scale(.94);filter:brightness(1.15)}
+    .crystal-facet{position:absolute;inset:0;background:linear-gradient(125deg,transparent 40%,rgba(255,255,255,.45) 48%,transparent 56%);opacity:.35;animation:facetShift 4s ease-in-out infinite;pointer-events:none}
+    @keyframes facetShift{0%,100%{opacity:.25;transform:rotate(-2deg)}50%{opacity:.45;transform:rotate(3deg)}}
+    .crystal-pulse{position:absolute;left:50%;top:50%;width:120%;height:120%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(120,230,255,.25) 0%,transparent 65%);pointer-events:none;animation:crystalPulse 2.2s ease-in-out infinite}
+    @keyframes crystalPulse{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(.92)}50%{opacity:.75;transform:translate(-50%,-50%) scale(1.05)}}
+    .tap-hud{position:relative;z-index:2;text-align:center;padding:12px 10px 16px;pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+    .tap-hud .big{font-size:clamp(1.5rem,5vw,2rem);font-weight:900;letter-spacing:.5px;background:linear-gradient(90deg,#b8f8ff,#e8c8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .tap-hud .sub{font-size:.88rem;color:#c8d8f0;margin-top:6px}
+    .tap-hud .combo-line{font-size:1.05rem;font-weight:800;margin-top:4px;color:#fff}
+    .tap-hud .combo-line span.combo-num{color:var(--gold)}
+    .tap-hud .combo-line span.mul{color:#9fffd4}
+    .ripple{position:absolute;width:72px;height:72px;margin-left:-36px;margin-top:-36px;border-radius:50%;background:radial-gradient(circle,rgba(180,240,255,.55) 0%,transparent 72%);pointer-events:none;animation:rippleGo .58s ease-out forwards;z-index:3}
+    @keyframes rippleGo{from{transform:scale(.2);opacity:.95}to{transform:scale(3.2);opacity:0}}
+    .spark{position:absolute;left:0;top:0;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:4;animation:sparkFly .52s ease-out forwards;box-shadow:0 0 8px currentColor;transform:translate(-50%,-50%)}
+    @keyframes sparkFly{to{transform:translate(-50%,-50%) translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+    .btn{border:none;border-radius:12px;padding:11px 12px;font-weight:800;color:#051021;cursor:pointer;touch-action:manipulation;background:linear-gradient(120deg,#ffe69a,#ffb6a5);min-width:120px} .btn.alt{background:linear-gradient(120deg,#93ccff,#dcb2ff)} .btn.good{background:linear-gradient(120deg,#98ffbe,#d0ff9a)} .btn:disabled{opacity:.45;cursor:not-allowed}
+    .progress-wrap{margin-top:8px} .progress-head{display:flex;justify-content:space-between;gap:8px;font-size:.84rem;color:var(--muted)}
+    .bar{height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.12);margin-top:4px} .fill{height:100%;width:0;background:linear-gradient(90deg,#66f3ff,#97b2ff,#dba0ff);transition:width .2s linear}
+    .diary-wrap{margin:0;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+    .diary-wrap summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:800;font-size:1rem;display:flex;justify-content:space-between;align-items:center;gap:8px;user-select:none}
+    .diary-wrap summary::-webkit-details-marker{display:none}
+    .diary-wrap summary::after{content:"▼";font-size:.7rem;opacity:.7;transition:transform .2s}
+    .diary-wrap:not([open]) summary::after{transform:rotate(-90deg)}
+    .diary-hint{font-size:.78rem;font-weight:600;color:var(--muted)}
+    .diary-body{padding:0 12px 12px}
+    .leaderboard{border:1px solid rgba(120,200,255,.2);border-radius:10px;padding:8px 10px;margin-bottom:10px;background:rgba(0,0,0,.15)}
+    .lb-title{font-size:.82rem;font-weight:800;margin-bottom:6px;color:var(--gold)}
+    .lb-row{display:grid;grid-template-columns:28px 1fr auto;gap:6px;font-size:.86rem;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+    .lb-row:last-child{border-bottom:none}
+    .lb-row span:last-child{color:var(--muted);font-size:.78rem}
+    .story{min-height:100px;max-height:200px;overflow:auto;font-size:.93rem;line-height:1.4;color:#dce7ff;padding-right:4px} .story p{margin:.2rem 0 .55rem} .line-npc{color:var(--gold)} .line-sys{color:var(--ok)} .line-evt{color:#ffcbf3} .line-record{color:#9fd4ff}
+    .trial-row{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .mini-fail-actions{display:grid;gap:10px;margin-top:12px}
+    #miniPlaying{display:block} #miniFailed{display:none} #miniFailed.show{display:block} #miniPlaying.hide{display:none}
+    .up-grid,.companions,.talents,.skins,.quests{display:grid;gap:8px}
+    .upgrade,.cmp,.talent,.skin,.quest{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);border-radius:12px;padding:8px}
+    .upgrade .name,.talent .name,.skin .name{font-weight:700} .upgrade small,.cmp span,.small,.talent small,.skin small,.quest small{color:var(--muted);font-size:.86rem}
+    .panel-title{margin:.05rem 0 .55rem}
+    .overlay{position:fixed;inset:0;background:rgba(3,4,14,.72);display:none;align-items:center;justify-content:center;padding:14px;z-index:20}
+    .overlay.open{display:flex}
+    .modal{width:min(520px,100%);background:rgba(12,16,40,.96);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:14px}
+    .minigame-target{font-weight:900;font-size:1.4rem;margin:.4rem 0}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="topbar">
+      <div class="card stat"><div class="k">💎 Aether</div><div class="v" id="aether">0</div></div>
+      <div class="card stat"><div class="k">⚡ / sec</div><div class="v" id="aps">0</div></div>
+      <div class="card stat"><div class="k">🛡️ Livello</div><div class="v" id="heroLevel">1</div></div>
+      <div class="card stat"><div class="k">📖 Capitolo</div><div class="v" id="chapter">1</div></div>
+      <div class="card stat"><div class="k">👹 Boss</div><div class="v" id="bossHp">-</div></div>
+      <div class="card stat"><div class="k">✨ Eterni</div><div class="v" id="shards">0</div></div>
+    </section>
+
+    <section class="left">
+      <article class="card hero">
+        <div class="avatar" aria-hidden="true" id="avatar"><span class="avatar-emoji" id="avatarEmoji">🛡️</span></div>
+        <div>
+          <h1 id="heroName">⚔️ Kael, Custode dell'Alba</h1>
+          <p id="heroInfo">Armatura Runica Lv 1 - Spada Prisma Lv 1 - Cuore Arcano Lv 1</p>
+          <div class="progress-wrap">
+            <div class="progress-head"><span>Progresso capitolo</span><span id="chapterPct">0%</span></div>
+            <div class="bar"><div id="chapterFill" class="fill"></div></div>
+          </div>
+          <p class="small">Al 95% parte la Prova del Varco. Ritentativi con ✨ Eterni.</p>
+          <div class="trial-row" id="trialRow" style="display:none">
+            <button type="button" class="btn alt" id="retryTrialBtn">Riprova Prova</button>
+          </div>
+        </div>
+      </article>
+
+      <article id="tapZone" class="card tap-zone" role="button" tabindex="0" aria-label="Tocca per estrarre Aether dal cristallo">
+        <div class="crystal-pulse" aria-hidden="true"></div>
+        <div class="crystal-core" aria-hidden="true"><div class="crystal-facet"></div></div>
+        <div class="tap-hud">
+          <div class="big" id="tapTitle">💎 Cristallo primordiale</div>
+          <div class="combo-line">🔥 <span class="combo-num" id="comboStreak">0</span> in fila · <span class="mul" id="comboMul">x1.00</span> · <span id="comboTier">—</span></div>
+          <div class="sub" id="tapGainPreview">+0 Aether</div>
+        </div>
+      </article>
+
+      <article class="card" style="padding:0">
+        <details class="diary-wrap" id="diaryWrap">
+          <summary><span>📜 Diario e classifica tap</span><span class="diary-hint">tocca per espandere</span></summary>
+          <div class="diary-body">
+            <div id="leaderboard" class="leaderboard" aria-label="Top 5 streak tap"></div>
+            <div id="story" class="story"></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="card">
+        <h3 class="panel-title">🎯 Missioni ed eventi</h3>
+        <div id="quests" class="quests"></div>
+      </article>
+    </section>
+
+    <section class="right">
+      <article class="card">
+        <h3 class="panel-title">⚙️ Potenziamenti infiniti</h3>
+        <div class="up-grid" id="upgrades"></div>
+      </article>
+
+      <article class="card">
+        <h3 class="panel-title">🧑‍🤝‍🧑 Compagni</h3>
+        <div id="companions" class="companions"></div>
+      </article>
+
+      <article class="card">
+        <h3 class="panel-title">🌳 Albero talenti</h3>
+        <div id="talents" class="talents"></div>
+      </article>
+
+      <article class="card">
+        <h3 class="panel-title">🎨 Skin armatura</h3>
+        <div id="skins" class="skins"></div>
+      </article>
+
+      <article class="card">
+        <h3 class="panel-title">🌀 Controlli</h3>
+        <button id="prestigeBtn" class="btn alt" type="button">Ascendi (Prestigio)</button>
+        <p class="small">L'ascensione azzera i livelli ma ti dona Frammenti Eterni permanenti (+25% produzione base ciascuno).</p>
+      </article>
+    </section>
+  </main>
+
+  <section id="minigameOverlay" class="overlay" aria-modal="true" role="dialog">
+    <div class="modal">
+      <h3 class="panel-title">🧩 Prova del Varco</h3>
+      <div id="miniPlaying">
+        <p class="small">Ripeti la sequenza prima che finisca il timer.</p>
+        <p class="minigame-target" id="miniSeq">-</p>
+        <p class="small">Input: <span id="miniInput">-</span> | Tempo: <span id="miniTimer">8.0</span>s</p>
+        <div id="miniKeys" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px">
+          <button class="btn good mini-key" data-k="A" type="button">A</button>
+          <button class="btn good mini-key" data-k="B" type="button">B</button>
+          <button class="btn good mini-key" data-k="C" type="button">C</button>
+          <button class="btn good mini-key" data-k="D" type="button">D</button>
+        </div>
+        <p class="small" id="miniMsg" style="margin-top:8px">Primo tentativo del capitolo: gratuito. Ritentativi: ✨ Eterni.</p>
+      </div>
+      <div id="miniFailed" style="display:none">
+        <p class="small" id="miniFailMsg" style="color:var(--danger);font-weight:700">Prova fallita.</p>
+        <p class="small" id="miniRetryHint">Puoi ritentare pagando Frammenti Eterni.</p>
+        <div class="mini-fail-actions">
+          <button type="button" class="btn good" id="miniRetryBtn">Ritenta</button>
+          <button type="button" class="btn alt" id="miniAbandonBtn">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const ui = {
+      aether: document.getElementById("aether"),
+      aps: document.getElementById("aps"),
+      heroLevel: document.getElementById("heroLevel"),
+      chapter: document.getElementById("chapter"),
+      chapterPct: document.getElementById("chapterPct"),
+      chapterFill: document.getElementById("chapterFill"),
+      bossHp: document.getElementById("bossHp"),
+      shards: document.getElementById("shards"),
+      avatar: document.getElementById("avatar"),
+      avatarEmoji: document.getElementById("avatarEmoji"),
+      heroInfo: document.getElementById("heroInfo"),
+      story: document.getElementById("story"),
+      upgrades: document.getElementById("upgrades"),
+      companions: document.getElementById("companions"),
+      talents: document.getElementById("talents"),
+      skins: document.getElementById("skins"),
+      quests: document.getElementById("quests"),
+      tapZone: document.getElementById("tapZone"),
+      comboStreak: document.getElementById("comboStreak"),
+      comboMul: document.getElementById("comboMul"),
+      comboTier: document.getElementById("comboTier"),
+      tapGainPreview: document.getElementById("tapGainPreview"),
+      prestigeBtn: document.getElementById("prestigeBtn"),
+      minigameOverlay: document.getElementById("minigameOverlay"),
+      miniSeq: document.getElementById("miniSeq"),
+      miniInput: document.getElementById("miniInput"),
+      miniTimer: document.getElementById("miniTimer"),
+      miniMsg: document.getElementById("miniMsg"),
+      miniPlaying: document.getElementById("miniPlaying"),
+      miniFailed: document.getElementById("miniFailed"),
+      miniFailMsg: document.getElementById("miniFailMsg"),
+      miniRetryHint: document.getElementById("miniRetryHint"),
+      miniRetryBtn: document.getElementById("miniRetryBtn"),
+      miniAbandonBtn: document.getElementById("miniAbandonBtn"),
+      diaryWrap: document.getElementById("diaryWrap"),
+      leaderboard: document.getElementById("leaderboard"),
+      retryTrialBtn: document.getElementById("retryTrialBtn"),
+      trialRow: document.getElementById("trialRow")
+    };
+
+    const storyChapters = [
+      "Una fenditura viola squarcia il cielo di Eryndor. Kael stringe la lama e sente l'armatura vibrare.",
+      "Lyra, cartografa stellare, appare dalla nebbia: 'Quel portale mangia il tempo. Dobbiamo nutrire il Cuore Arcano.'",
+      "Nel Deserto di Vetro incontrate Bronn il Forgiatore, che promette metallo vivo in cambio di energia.",
+      "Le Ombre del Meridian avanzano. Ogni tuo tocco spezza una runa e libera cittadini intrappolati.",
+      "L'Oracolo Zero rivela la verita: il portale e un frammento del tuo futuro.",
+      "La Citta Sospesa canta in frequenze antiche; i compagni sincronizzano i colpi con il tuo battito.",
+      "I Guardiani Eidolon calano dal cielo. Kael fonde tre armature in una sola corazza infinita.",
+      "Il Re Senza Volto ride oltre la soglia. 'Scala ancora. Ogni infinito e solo un primo passo.'",
+      "Le cronache si riscrivono. Ogni capitolo successivo e procedurale e non ha fine."
+    ];
+
+    const templates = {
+      armor: { label: "Armatura Runica", baseCost: 10, growth: 1.19, value: 1.14, desc: "Aumenta produzione idle" },
+      sword: { label: "Spada Prisma", baseCost: 14, growth: 1.2, value: 1.13, desc: "Potenza base colpo" },
+      core: { label: "Cuore Arcano", baseCost: 30, growth: 1.22, value: 1.1, desc: "Moltiplicatore globale" },
+      combo: { label: "Risonanza Cristallo", baseCost: 48, growth: 1.2, value: 1.065, desc: "Potenzia il moltiplicatore combo tap" }
+    };
+
+    const companionPool = [
+      { id: "lyra", name: "Lyra", emoji: "🧭", lore: "Cartografa stellare", baseCost: 110, baseAps: 1.5, growth: 1.21 },
+      { id: "bronn", name: "Bronn", emoji: "🔨", lore: "Forgiatore titanico", baseCost: 260, baseAps: 4.2, growth: 1.23 },
+      { id: "nyx", name: "Nyx", emoji: "🗡️", lore: "Ladra di rune", baseCost: 740, baseAps: 12, growth: 1.25 }
+    ];
+
+    const talentsDef = [
+      { id: "fury", name: "Furia", desc: "+12% potere tocco/lv", baseCost: 60, growth: 1.4 },
+      { id: "craft", name: "Artigiano", desc: "-4% costo upgrade/lv", baseCost: 85, growth: 1.45 },
+      { id: "focus", name: "Focalizzazione", desc: "+9% APS/lv", baseCost: 70, growth: 1.42 }
+    ];
+
+    const skinsDef = [
+      { id: "base", name: "Rara - Azzurra", rarity: "Rara", cost: 0, mul: 1, cls: "base" },
+      { id: "epica", name: "Epica - Nebula", rarity: "Epica", cost: 2, mul: 1.2, cls: "epica" },
+      { id: "leggendaria", name: "Leggendaria - Solaris", rarity: "Leggendaria", cost: 8, mul: 1.55, cls: "leggendaria" }
+    ];
+
+    const defaultState = {
+      aether: 0,
+      totalEarned: 0,
+      eternalShards: 0,
+      chapter: 1,
+      armor: 1,
+      sword: 1,
+      core: 1,
+      combo: 1,
+      comboStreak: 0,
+      lastComboTapAt: 0,
+      companions: {
+        lyra: 0,
+        bronn: 0,
+        nyx: 0
+      },
+      talents: {
+        fury: 0,
+        craft: 0,
+        focus: 0
+      },
+      activeSkin: "base",
+      unlockedSkins: ["base"],
+      quest: { type: "tap", target: 50, progress: 0, rewardMul: 0.15, expiresAt: 0, title: "" },
+      dailyEvent: { title: "", until: 0, tapMul: 1, idleMul: 1 },
+      chapterProgressStart: 0,
+      chapterReady: false,
+      chapterTrialPassed: false,
+      bossMaxHp: 100,
+      bossHp: 100,
+      unlockedCompanions: 1,
+      lastTick: Date.now(),
+      lastQuestGen: 0,
+      taps: 0,
+      offlinePopupSeenAt: 0,
+      trialFreeUsed: false,
+      bestStreakEver: 0,
+      tapTop5: [],
+      diaryOpen: true,
+      storyLog: []
+    };
+
+    const state = load();
+
+    function clone(obj){
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem("chronicles-idle-save-v1");
+        if(!raw) return clone(defaultState);
+        const parsed = JSON.parse(raw);
+        return {
+          ...clone(defaultState),
+          ...parsed,
+          companions: { ...defaultState.companions, ...(parsed.companions || {}) },
+          talents: { ...defaultState.talents, ...(parsed.talents || {}) },
+          tapTop5: Array.isArray(parsed.tapTop5) ? parsed.tapTop5 : [],
+          storyLog: Array.isArray(parsed.storyLog) ? parsed.storyLog : []
+        };
+      }catch{
+        return clone(defaultState);
+      }
+    }
+
+    function save(){
+      localStorage.setItem("chronicles-idle-save-v1", JSON.stringify(state));
+    }
+
+    function fmt(n){
+      if (n < 1000) return n.toFixed(1).replace(".0", "");
+      const units = ["K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc"];
+      let u = -1;
+      while(n >= 1000 && u < units.length - 1){
+        n /= 1000;
+        u++;
+      }
+      return n.toFixed(2) + units[u];
+    }
+
+    function lvlCost(key, nextLevel){
+      const t = templates[key];
+      const craftDiscount = 1 - Math.min(0.75, state.talents.craft * 0.04);
+      return t.baseCost * Math.pow(t.growth, nextLevel - 1) * craftDiscount;
+    }
+
+    function companionCost(c, owned){
+      return c.baseCost * Math.pow(c.growth, owned);
+    }
+
+    function eternalBoost(){
+      return 1 + state.eternalShards * 0.25;
+    }
+
+    function skinMul(){
+      return skinsDef.find(s => s.id === state.activeSkin)?.mul || 1;
+    }
+
+    function eventTapMul(){
+      return state.dailyEvent.tapMul || 1;
+    }
+
+    function eventIdleMul(){
+      return state.dailyEvent.idleMul || 1;
+    }
+
+    function idlePerSec(){
+      const armorPower = Math.pow(templates.armor.value, state.armor - 1);
+      const corePower = Math.pow(templates.core.value, state.core - 1);
+      let companionsAps = 0;
+      for (const c of companionPool){
+        const count = state.companions[c.id] || 0;
+        companionsAps += count * c.baseAps;
+      }
+      const focus = 1 + state.talents.focus * 0.09;
+      const base = (1 + state.chapter * 0.35) * armorPower + companionsAps;
+      return base * corePower * eternalBoost() * focus * skinMul() * eventIdleMul();
+    }
+
+    function tapPower(){
+      const swordPower = Math.pow(templates.sword.value, state.sword - 1);
+      const corePower = Math.pow(templates.core.value, state.core - 1);
+      const levelBonus = 1 + (heroLevel() - 1) * 0.05;
+      const fury = 1 + state.talents.fury * 0.12;
+      return 1.5 * swordPower * corePower * levelBonus * eternalBoost() * fury * skinMul() * eventTapMul();
+    }
+
+    function comboResonanceMul(){
+      return Math.pow(templates.combo.value, (state.combo || 1) - 1);
+    }
+
+    function streakMult(streak){
+      if (streak >= 150) return 8;
+      if (streak >= 100) return 6;
+      if (streak >= 75) return 5;
+      if (streak >= 50) return 4;
+      if (streak >= 25) return 3;
+      if (streak < 1) return 1;
+      return 1 + (streak / 24) * 1.92;
+    }
+
+    function tierLabel(streak){
+      if (streak >= 150) return "x8";
+      if (streak >= 100) return "x6";
+      if (streak >= 75) return "x5";
+      if (streak >= 50) return "x4";
+      if (streak >= 25) return "x3";
+      if (streak >= 1) return "rampa";
+      return "—";
+    }
+
+    function effectiveStreakForNextTap(){
+      const now = Date.now();
+      if (!state.lastComboTapAt || now - state.lastComboTapAt > 1100) return 1;
+      return state.comboStreak + 1;
+    }
+
+    function tapTotalForStreak(s){
+      return tapPower() * streakMult(s) * comboResonanceMul();
+    }
+
+    function heroLevel(){
+      return Math.floor((state.armor + state.sword + state.core + (state.combo || 1)) / 4);
+    }
+
+    function addAether(value){
+      state.aether += value;
+      state.totalEarned += value;
+    }
+
+    function chapterGoal(){
+      return Math.pow(90, state.chapter) * 35;
+    }
+
+    function chapterProgress(){
+      const now = state.totalEarned - state.chapterProgressStart;
+      return Math.max(0, Math.min(1, now / chapterGoal()));
+    }
+
+    function canAdvanceStory(){
+      return chapterProgress() >= 1 && state.chapterTrialPassed;
+    }
+
+    function pushStory(text, cls = ""){
+      const entry = { text, cls, time: Date.now() };
+      state.storyLog.unshift(entry);
+      if (state.storyLog.length > 35) state.storyLog.length = 35;
+    }
+
+    function formatShortDate(ts){
+      try{
+        return new Date(ts).toLocaleString("it-IT", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+      }catch{ return "—"; }
+    }
+
+    function renderLeaderboard(){
+      if (!ui.leaderboard) return;
+      const list = (state.tapTop5 || []).slice(0, 5);
+      if (!list.length){
+        ui.leaderboard.innerHTML = `<div class="lb-title">🏆 Top 5 streak (tap in fila)</div><p class="small" style="margin:0">Nessun run ancora. Gioca nella zona cristallo!</p>`;
+        return;
+      }
+      const rows = list.map((e, i) =>
+        `<div class="lb-row"><span>${i + 1}</span><span><strong>${e.score}</strong> in fila</span><span>${formatShortDate(e.at)}</span></div>`
+      ).join("");
+      ui.leaderboard.innerHTML = `<div class="lb-title">🏆 Top 5 streak (tap in fila)</div>${rows}`;
+    }
+
+    function renderStory(){
+      if (!state.storyLog.length){
+        pushStory(storyChapters[0], "line-npc");
+      }
+      ui.story.innerHTML = state.storyLog.map(item => {
+        const klass = item.cls ? ` class="${item.cls}"` : "";
+        return `<p${klass}>${item.text}</p>`;
+      }).join("");
+    }
+
+    function finalizeStreakRun(endedStreak){
+      if (endedStreak < 1) return;
+      const prevBest = state.bestStreakEver || 0;
+      if (endedStreak > prevBest){
+        state.bestStreakEver = endedStreak;
+        pushStory(`Nuovo record personale: ${endedStreak} tap in fila!`, "line-record");
+      }
+      const list = [...(state.tapTop5 || []).map(e => ({ score: e.score, at: e.at })), { score: endedStreak, at: Date.now() }];
+      list.sort((a, b) => b.score - a.score);
+      state.tapTop5 = list.slice(0, 5);
+    }
+
+    function retryTrialCost(){
+      return Math.max(1, Math.floor(1 + state.chapter * 0.35));
+    }
+
+    function beginTrialAttempt(){
+      if (state.chapterTrialPassed) return false;
+      if (chapterProgress() < 0.95) return false;
+      const cost = retryTrialCost();
+      const free = !state.trialFreeUsed;
+      if (!free && state.eternalShards < cost){
+        pushStory(`Servono ${cost} Frammenti Eterni per ritentare la Prova del Varco.`, "line-evt");
+        update();
+        return false;
+      }
+      if (!free) state.eternalShards -= cost;
+      state.trialFreeUsed = true;
+      openMinigame();
+      return true;
+    }
+
+    function retryMinigameOverlay(){
+      const cost = retryTrialCost();
+      if (state.eternalShards < cost){
+        ui.miniFailMsg.textContent = `Ti servono ${cost} Frammenti Eterni.`;
+        return;
+      }
+      state.eternalShards -= cost;
+      openMinigame();
+    }
+
+    function abandonMinigame(){
+      minigame.open = false;
+      minigame.phase = "idle";
+      ui.minigameOverlay.classList.remove("open");
+      ui.miniPlaying.style.display = "block";
+      ui.miniFailed.style.display = "none";
+      pushStory("Hai rinviato la Prova del Varco. Ritenta quando vuoi (costo in Eterni).", "line-evt");
+      update();
+    }
+
+    function unlockCompanionIfNeeded(){
+      const targetUnlock = Math.min(companionPool.length, 1 + Math.floor(state.chapter / 2));
+      if (targetUnlock > state.unlockedCompanions){
+        state.unlockedCompanions = targetUnlock;
+        const newComp = companionPool[targetUnlock - 1];
+        pushStory(`${newComp.name} si unisce al gruppo: ${newComp.lore}.`, "line-sys");
+      }
+    }
+
+    function tryAdvanceStory(){
+      if (canAdvanceStory()){
+        state.chapter++;
+        state.chapterProgressStart = state.totalEarned;
+        state.chapterReady = false;
+        state.chapterTrialPassed = false;
+        state.trialFreeUsed = false;
+        pushStory(storyChapters[Math.min(storyChapters.length - 1, state.chapter - 1)] || "Nuovo capitolo procedurale attivo.", "line-npc");
+        pushStory("Boss del nuovo capitolo apparso.", "line-sys");
+        resetBoss();
+        unlockCompanionIfNeeded();
+      }
+    }
+
+    function resetBoss(){
+      state.bossMaxHp = 80 + Math.pow(state.chapter, 1.45) * 120;
+      state.bossHp = state.bossMaxHp;
+    }
+
+    function buyUpgrade(key){
+      const next = state[key] + 1;
+      const cost = lvlCost(key, next);
+      if (state.aether < cost) return;
+      state.aether -= cost;
+      state[key] = next;
+      pushStory(`Potenziato ${templates[key].label} al livello ${state[key]}.`, "line-sys");
+      update();
+    }
+
+    function buyCompanion(c){
+      const owned = state.companions[c.id] || 0;
+      const cost = companionCost(c, owned);
+      if (state.aether < cost) return;
+      state.aether -= cost;
+      state.companions[c.id] = owned + 1;
+      pushStory(`${c.name} migliora il team (x${state.companions[c.id]}).`, "line-sys");
+      update();
+    }
+
+    function talentCost(talent){
+      const lv = state.talents[talent.id] || 0;
+      return talent.baseCost * Math.pow(talent.growth, lv);
+    }
+
+    function buyTalent(talent){
+      const cost = talentCost(talent);
+      if (state.aether < cost) return;
+      state.aether -= cost;
+      state.talents[talent.id] += 1;
+      pushStory(`Talento ${talent.name} aumentato al livello ${state.talents[talent.id]}.`, "line-sys");
+      update();
+    }
+
+    function buySkin(skin){
+      if (state.unlockedSkins.includes(skin.id)){
+        state.activeSkin = skin.id;
+        update();
+        return;
+      }
+      if (state.eternalShards < skin.cost) return;
+      state.eternalShards -= skin.cost;
+      state.unlockedSkins.push(skin.id);
+      state.activeSkin = skin.id;
+      pushStory(`Sbloccata skin ${skin.name}.`, "line-sys");
+      update();
+    }
+
+    function damageBoss(amount){
+      state.bossHp = Math.max(0, state.bossHp - amount);
+      if (state.bossHp <= 0){
+        const reward = state.bossMaxHp * 0.25;
+        addAether(reward);
+        pushStory(`Boss sconfitto! Ricompensa ${fmt(reward)} Aether.`, "line-sys");
+        resetBoss();
+      }
+    }
+
+    function newQuest(force){
+      const now = Date.now();
+      if (!force && now - state.lastQuestGen < 60000 && state.quest.expiresAt > now) return;
+      state.lastQuestGen = now;
+      const defs = [
+        { type: "tap", title: "Assesta colpi", target: 50 + state.chapter * 15, rewardMul: 0.14 },
+        { type: "boss", title: "Sconfiggi boss", target: 2 + Math.floor(state.chapter / 2), rewardMul: 0.2 },
+        { type: "earn", title: "Accumula Aether", target: Math.pow(10, 2 + Math.min(6, state.chapter * 0.4)), rewardMul: 0.18 }
+      ];
+      const q = defs[Math.floor(Math.random() * defs.length)];
+      state.quest = { ...q, progress: 0, expiresAt: now + 12 * 60 * 1000 };
+      pushStory(`Nuova missione: ${q.title}.`, "line-evt");
+    }
+
+    function ensureDailyEvent(){
+      const now = Date.now();
+      if (state.dailyEvent.until > now) return;
+      const events = [
+        { title: "Pioggia Astrale: +35% tap", tapMul: 1.35, idleMul: 1, dur: 20 * 60 * 1000 },
+        { title: "Canti Runici: +30% idle", tapMul: 1, idleMul: 1.3, dur: 20 * 60 * 1000 },
+        { title: "Eclissi Gemella: +18% globale", tapMul: 1.18, idleMul: 1.18, dur: 20 * 60 * 1000 }
+      ];
+      const e = events[Math.floor(Math.random() * events.length)];
+      state.dailyEvent = { ...e, until: now + e.dur };
+      pushStory(`Evento attivo: ${e.title}.`, "line-evt");
+    }
+
+    function createUpgradeRow(key){
+      const t = templates[key];
+      const row = document.createElement("div");
+      row.className = "upgrade";
+      const left = document.createElement("div");
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.type = "button";
+      btn.addEventListener("click", () => buyUpgrade(key));
+      row.append(left, btn);
+      ui.upgrades.appendChild(row);
+      return { key, t, left, btn };
+    }
+
+    function createCompanionRow(c){
+      const row = document.createElement("div");
+      row.className = "cmp";
+      const left = document.createElement("div");
+      const btn = document.createElement("button");
+      btn.className = "btn alt";
+      btn.type = "button";
+      btn.addEventListener("click", () => buyCompanion(c));
+      row.append(left, btn);
+      ui.companions.appendChild(row);
+      return { c, row, left, btn };
+    }
+
+    function createTalentRow(t){
+      const row = document.createElement("div");
+      row.className = "talent";
+      const left = document.createElement("div");
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.type = "button";
+      btn.addEventListener("click", () => buyTalent(t));
+      row.append(left, btn);
+      ui.talents.appendChild(row);
+      return { t, left, btn };
+    }
+
+    function createSkinRow(s){
+      const row = document.createElement("div");
+      row.className = "skin";
+      const left = document.createElement("div");
+      const btn = document.createElement("button");
+      btn.className = "btn alt";
+      btn.type = "button";
+      btn.addEventListener("click", () => buySkin(s));
+      row.append(left, btn);
+      ui.skins.appendChild(row);
+      return { s, left, btn };
+    }
+
+    function createQuestRow(){
+      const row = document.createElement("div");
+      row.className = "quest";
+      const left = document.createElement("div");
+      const btn = document.createElement("button");
+      btn.className = "btn good";
+      btn.type = "button";
+      btn.textContent = "Riscatta";
+      btn.addEventListener("click", claimQuest);
+      row.append(left, btn);
+      ui.quests.appendChild(row);
+      return { row, left, btn };
+    }
+
+    const upgradeRows = ["armor", "sword", "core", "combo"].map(createUpgradeRow);
+    const companionRows = companionPool.map(createCompanionRow);
+    const talentRows = talentsDef.map(createTalentRow);
+    const skinRows = skinsDef.map(createSkinRow);
+    const questRow = createQuestRow();
+
+    const minigame = {
+      open: false,
+      phase: "idle",
+      seq: "",
+      input: "",
+      timeLeft: 0
+    };
+
+    function openMinigame(){
+      const keys = ["A","B","C","D"];
+      minigame.seq = Array.from({ length: 5 + Math.min(4, state.chapter) }, () => keys[Math.floor(Math.random() * keys.length)]).join("");
+      minigame.input = "";
+      minigame.timeLeft = Math.max(5, 10 - state.chapter * 0.22);
+      minigame.phase = "playing";
+      minigame.open = true;
+      ui.miniPlaying.style.display = "block";
+      ui.miniFailed.style.display = "none";
+      ui.minigameOverlay.classList.add("open");
+      ui.miniSeq.textContent = minigame.seq;
+      ui.miniInput.textContent = "-";
+      ui.miniTimer.textContent = minigame.timeLeft.toFixed(1);
+      ui.miniMsg.textContent = "Primo tentativo: gratis. Ritentativi: costi in Eterni.";
+    }
+
+    function failMinigame(msg){
+      minigame.phase = "failed";
+      ui.miniPlaying.style.display = "none";
+      ui.miniFailed.style.display = "block";
+      ui.miniFailMsg.textContent = msg;
+      const c = retryTrialCost();
+      ui.miniRetryHint.textContent = `Ritenta pagando ${c} Frammenti Eterni (✨).`;
+      ui.miniRetryBtn.textContent = `Ritenta (${c} ✨)`;
+    }
+
+    function closeMinigameSuccess(){
+      minigame.open = false;
+      minigame.phase = "idle";
+      ui.minigameOverlay.classList.remove("open");
+      ui.miniPlaying.style.display = "block";
+      ui.miniFailed.style.display = "none";
+      state.chapterTrialPassed = true;
+      pushStory("Prova del Varco superata.", "line-sys");
+      update();
+    }
+
+    function onMiniKey(k){
+      if (!minigame.open || minigame.phase !== "playing") return;
+      minigame.input += k;
+      ui.miniInput.textContent = minigame.input;
+      if (!minigame.seq.startsWith(minigame.input)){
+        failMinigame("Sequenza errata.");
+        return;
+      }
+      if (minigame.input === minigame.seq){
+        closeMinigameSuccess();
+      }
+    }
+
+    function chapterTrialCheck(){
+      if (state.chapterTrialPassed) return;
+      const prog = chapterProgress();
+      if (prog >= 0.95 && !state.chapterReady){
+        state.chapterReady = true;
+        pushStory("Il varco e quasi stabile. Completa la Prova del Varco!", "line-evt");
+        beginTrialAttempt();
+      }
+    }
+
+    function claimQuest(){
+      if (state.quest.progress < state.quest.target) return;
+      const reward = 1 + state.quest.rewardMul;
+      const bonus = state.aether * state.quest.rewardMul;
+      addAether(bonus);
+      pushStory(`Missione completata: bonus ${Math.round((reward - 1) * 100)}% (${fmt(bonus)} Aether).`, "line-sys");
+      newQuest(true);
+      update();
+    }
+
+    function updateQuestProgress(kind, amount){
+      if (state.quest.type !== kind) return;
+      state.quest.progress += amount;
+    }
+
+    function skinEmoji(){
+      const cls = skinsDef.find(s => s.id === state.activeSkin)?.cls || "base";
+      if (cls === "leggendaria") return "🔥";
+      if (cls === "epica") return "💜";
+      return "🛡️";
+    }
+
+    function tapEffects(clientX, clientY){
+      const z = ui.tapZone;
+      z.classList.remove("tap-flash");
+      void z.offsetWidth;
+      z.classList.add("tap-flash");
+      const r = z.getBoundingClientRect();
+      const lx = clientX - r.left;
+      const ly = clientY - r.top;
+      const rip = document.createElement("div");
+      rip.className = "ripple";
+      rip.style.left = lx + "px";
+      rip.style.top = ly + "px";
+      z.appendChild(rip);
+      setTimeout(() => rip.remove(), 600);
+      const n = 10 + Math.floor(state.comboStreak / 25);
+      for (let i = 0; i < Math.min(22, n); i++){
+        const sp = document.createElement("div");
+        sp.className = "spark";
+        sp.style.left = lx + "px";
+        sp.style.top = ly + "px";
+        const ang = Math.random() * Math.PI * 2;
+        const d = 36 + Math.random() * 72;
+        sp.style.setProperty("--sx", Math.cos(ang) * d + "px");
+        sp.style.setProperty("--sy", Math.sin(ang) * d + "px");
+        sp.style.background = `hsl(${185 + Math.random() * 70},100%,${62 + Math.random() * 18}%)`;
+        z.appendChild(sp);
+        setTimeout(() => sp.remove(), 520);
+      }
+    }
+
+    function performTap(clientX, clientY){
+      if (minigame.open) return;
+      tapEffects(clientX, clientY);
+      const now = Date.now();
+      if (state.lastComboTapAt && now - state.lastComboTapAt > 1100) state.comboStreak = 0;
+      state.comboStreak = (state.comboStreak || 0) + 1;
+      state.lastComboTapAt = now;
+      const total = tapTotalForStreak(state.comboStreak);
+      addAether(total);
+      damageBoss(total * 0.55);
+      state.taps += 1;
+      updateQuestProgress("tap", 1);
+      update();
+    }
+
+    function updateOfflineProgress(){
+      const now = Date.now();
+      const offlineSec = Math.max(0, (now - state.lastTick) / 1000);
+      if (offlineSec < 4) return;
+      const capped = Math.min(6 * 3600, offlineSec);
+      const gain = idlePerSec() * capped * 0.8;
+      addAether(gain);
+      state.offlinePopupSeenAt = now;
+      pushStory(`Rientro offline: ${Math.round(capped)}s, guadagno ${fmt(gain)} Aether.`, "line-sys");
+    }
+
+    function update(){
+      tryAdvanceStory();
+      ensureDailyEvent();
+      chapterTrialCheck();
+
+      const aps = idlePerSec();
+      const level = heroLevel();
+      const cProg = chapterProgress();
+
+      ui.aether.textContent = fmt(state.aether);
+      ui.aps.textContent = fmt(aps);
+      ui.heroLevel.textContent = String(level);
+      ui.chapter.textContent = String(state.chapter);
+      ui.chapterPct.textContent = Math.floor(cProg * 100) + "%";
+      ui.chapterFill.style.width = (cProg * 100).toFixed(1) + "%";
+      ui.bossHp.textContent = `${fmt(state.bossHp)} / ${fmt(state.bossMaxHp)}`;
+      ui.shards.textContent = String(state.eternalShards);
+      ui.heroInfo.textContent = `🛡️ ${state.armor} · ⚔️ ${state.sword} · 💠 ${state.core} · 💎 Risonanza ${state.combo} · 📡 ${state.dailyEvent.title || "—"}`;
+      ui.avatar.dataset.skin = skinsDef.find(s => s.id === state.activeSkin)?.cls || "base";
+      if (ui.avatarEmoji) ui.avatarEmoji.textContent = skinEmoji();
+      const curMul = streakMult(state.comboStreak) * comboResonanceMul();
+      ui.comboStreak.textContent = String(state.comboStreak);
+      ui.comboMul.textContent = "x" + curMul.toFixed(2);
+      ui.comboTier.textContent = tierLabel(state.comboStreak);
+      const nextTap = tapTotalForStreak(effectiveStreakForNextTap());
+      ui.tapGainPreview.textContent = "+" + fmt(nextTap) + " Aether per colpo";
+
+      for (const item of upgradeRows){
+        const lvl = state[item.key];
+        const cost = lvlCost(item.key, lvl + 1);
+        item.left.innerHTML = `<div class="name">${item.t.label} Lv ${lvl}</div><small>${item.t.desc}</small>`;
+        item.btn.textContent = `Compra (${fmt(cost)})`;
+        item.btn.disabled = state.aether < cost;
+      }
+
+      for (let i = 0; i < companionRows.length; i++){
+        const row = companionRows[i];
+        const unlocked = i < state.unlockedCompanions;
+        row.row.style.display = unlocked ? "grid" : "none";
+        if (!unlocked) continue;
+        const owned = state.companions[row.c.id] || 0;
+        const cost = companionCost(row.c, owned);
+        row.left.innerHTML = `<b>${row.c.emoji || "✦"} ${row.c.name} x${owned}</b><span>${row.c.lore} · +${fmt(row.c.baseAps)} APS</span>`;
+        row.btn.textContent = `Assolda (${fmt(cost)})`;
+        row.btn.disabled = state.aether < cost;
+      }
+
+      for (const row of talentRows){
+        const lv = state.talents[row.t.id];
+        const cost = talentCost(row.t);
+        row.left.innerHTML = `<div class="name">${row.t.name} Lv ${lv}</div><small>${row.t.desc}</small>`;
+        row.btn.textContent = `Potenzia (${fmt(cost)})`;
+        row.btn.disabled = state.aether < cost;
+      }
+
+      for (const row of skinRows){
+        const unlocked = state.unlockedSkins.includes(row.s.id);
+        const active = state.activeSkin === row.s.id;
+        row.left.innerHTML = `<div class="name">${row.s.name}</div><small>${row.s.rarity} - x${row.s.mul.toFixed(2)} produzione</small>`;
+        row.btn.textContent = active ? "Attiva" : unlocked ? "Equipaggia" : `Sblocca (${row.s.cost} FE)`;
+        row.btn.disabled = !unlocked && state.eternalShards < row.s.cost;
+      }
+
+      if (Date.now() > state.quest.expiresAt){
+        newQuest(true);
+      }
+      const questPct = Math.min(1, state.quest.progress / state.quest.target);
+      questRow.left.innerHTML = `<div class="name">${state.quest.title}</div><small>${fmt(state.quest.progress)} / ${fmt(state.quest.target)} - bonus ${Math.round(state.quest.rewardMul * 100)}%</small>`;
+      questRow.btn.disabled = questPct < 1;
+
+      const prestigeGain = Math.floor(Math.sqrt(state.totalEarned / 1e6));
+      ui.prestigeBtn.textContent = `Ascendi ( +${prestigeGain} Frammenti Eterni )`;
+      ui.prestigeBtn.disabled = prestigeGain < 1;
+
+      renderStory();
+      renderLeaderboard();
+      if (ui.trialRow && ui.retryTrialBtn){
+        const showTrial = chapterProgress() >= 0.95 && !state.chapterTrialPassed;
+        ui.trialRow.style.display = showTrial ? "flex" : "none";
+        const c = retryTrialCost();
+        ui.retryTrialBtn.textContent = !state.trialFreeUsed ? `Prova del Varco (gratis)` : `Riprova Prova (${c} ✨)`;
+        ui.retryTrialBtn.disabled = !showTrial || (!!state.trialFreeUsed && state.eternalShards < c);
+      }
+      save();
+    }
+
+    ui.tapZone.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      performTap(e.clientX, e.clientY);
+    }, { passive: false });
+
+    ui.tapZone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        const r = ui.tapZone.getBoundingClientRect();
+        performTap(r.left + r.width / 2, r.top + r.height / 2);
+      }
+    });
+
+    ui.prestigeBtn.addEventListener("click", () => {
+      const gain = Math.floor(Math.sqrt(state.totalEarned / 1e6));
+      if (gain < 1) return;
+      state.eternalShards += gain;
+      const keepShards = state.eternalShards;
+      const keepTop = state.tapTop5;
+      const keepBest = state.bestStreakEver;
+      const keepDiary = state.diaryOpen;
+      Object.assign(state, clone(defaultState));
+      state.eternalShards = keepShards;
+      state.tapTop5 = keepTop || [];
+      state.bestStreakEver = keepBest || 0;
+      state.diaryOpen = keepDiary !== undefined ? keepDiary : true;
+      resetBoss();
+      newQuest(true);
+      pushStory(`Ascensione completata. Potere eterno +${gain}. Nuovo ciclo iniziato.`, "line-sys");
+      update();
+    });
+
+    if (ui.retryTrialBtn) ui.retryTrialBtn.addEventListener("click", () => beginTrialAttempt());
+    if (ui.miniRetryBtn) ui.miniRetryBtn.addEventListener("click", () => retryMinigameOverlay());
+    if (ui.miniAbandonBtn) ui.miniAbandonBtn.addEventListener("click", () => abandonMinigame());
+
+    if (ui.diaryWrap){
+      ui.diaryWrap.open = state.diaryOpen !== false;
+      ui.diaryWrap.addEventListener("toggle", () => {
+        state.diaryOpen = ui.diaryWrap.open;
+        save();
+      });
+    }
+
+    for (const key of document.querySelectorAll(".mini-key")){
+      key.addEventListener("click", () => onMiniKey(key.dataset.k));
+    }
+
+    function gameLoop(){
+      const now = Date.now();
+      const delta = Math.min(2.5, (now - state.lastTick) / 1000);
+      state.lastTick = now;
+      if (state.comboStreak > 0 && state.lastComboTapAt && now - state.lastComboTapAt > 1100){
+        finalizeStreakRun(state.comboStreak);
+        state.comboStreak = 0;
+      }
+      if (delta > 0){
+        const aps = idlePerSec();
+        addAether(aps * delta);
+        damageBoss(aps * delta * 0.2);
+        updateQuestProgress("earn", aps * delta);
+      }
+      if (state.bossHp <= 0.001){
+        updateQuestProgress("boss", 1);
+      }
+      if (minigame.open && minigame.phase === "playing"){
+        minigame.timeLeft -= delta;
+        ui.miniTimer.textContent = Math.max(0, minigame.timeLeft).toFixed(1);
+        if (minigame.timeLeft <= 0){
+          failMinigame("Tempo scaduto.");
+        }
+      }
+      update();
+    }
+
+    if (!state.storyLog.length){
+      pushStory(storyChapters[Math.max(0, state.chapter - 1)], "line-npc");
+    }
+    ensureDailyEvent();
+    newQuest(true);
+    if (!state.bossMaxHp || !state.bossHp){
+      resetBoss();
+    }
+    updateOfflineProgress();
+    update();
+    setInterval(gameLoop, 200);
+    setInterval(save, 3000);
+    window.addEventListener("beforeunload", save);
+  </script>
+</body>
+</html>
