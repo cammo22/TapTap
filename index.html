@@ -7,9 +7,10 @@
   <style>
     :root{--panel:rgba(11,15,36,.78);--line:rgba(146,185,255,.28);--txt:#e8f1ff;--muted:#9fb4d9;--gold:#ffd98b;--aqua:#5de6ff;--violet:#c18cff;--ok:#6cffbb;--danger:#ff8ba5}
     *{box-sizing:border-box} html,body{margin:0;min-height:100%;color:var(--txt);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;touch-action:manipulation;user-select:none;background:radial-gradient(1200px 700px at 15% -10%,#2e2a70 0%,transparent 70%),radial-gradient(1000px 700px at 95% 100%,#1b4d83 0%,transparent 70%),linear-gradient(135deg,#040611,#0a0f29 45%,#131642)}
+    .topbar-sticky{position:sticky;top:0;z-index:50;padding:10px 14px max(8px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(4,6,17,.97),rgba(6,10,28,.92));backdrop-filter:saturate(1.15) blur(12px);-webkit-backdrop-filter:saturate(1.15) blur(12px);border-bottom:1px solid rgba(146,185,255,.25);box-shadow:0 4px 20px rgba(0,0,0,.35)}
+    .topbar-sticky .topbar-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px} @media (max-width:840px){.topbar-sticky .topbar-inner{grid-template-columns:repeat(3,minmax(0,1fr))}}
     .wrap{max-width:1240px;margin:0 auto;padding:14px;display:grid;gap:12px;grid-template-columns:1.15fr .85fr} @media (max-width:960px){.wrap{grid-template-columns:1fr;padding:10px}}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;backdrop-filter:blur(8px);box-shadow:0 12px 30px rgba(0,0,0,.3)}
-    .topbar{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px} @media (max-width:840px){.topbar{grid-template-columns:repeat(3,minmax(0,1fr))}}
     .stat{text-align:center;padding:9px 7px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03)} .k{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px} .v{font-size:1.08rem;font-weight:800;margin-top:3px}
     .left,.right{display:grid;gap:10px;align-content:start}
     .hero{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center}
@@ -19,7 +20,7 @@
     .avatar:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.35) 35%,transparent 58%);animation:shine 3.5s linear infinite} @keyframes shine{from{transform:translateX(-110%)}to{transform:translateX(120%)}}
     .hero h1{margin:0;font-size:1.15rem} .hero p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
     .avatar-emoji{position:absolute;inset:0;display:grid;place-items:center;font-size:3rem;z-index:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4));pointer-events:none}
-    .tap-zone{border-radius:16px;border:1px solid rgba(255,255,255,.22);min-height:200px;position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline:none;transition:box-shadow .2s ease,transform .12s ease;background:radial-gradient(ellipse 90% 80% at 50% 100%,rgba(40,20,90,.5) 0%,transparent 55%),linear-gradient(165deg,rgba(15,25,55,.9),rgba(30,15,60,.75));box-shadow:inset 0 0 60px rgba(120,200,255,.12),0 8px 32px rgba(0,0,0,.35)}
+    .tap-zone{border-radius:16px;border:1px solid rgba(255,255,255,.22);min-height:200px;position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline:none;transition:box-shadow .2s ease,transform .12s ease;background:radial-gradient(ellipse 90% 80% at 50% 100%,rgba(40,20,90,.5) 0%,transparent 55%),linear-gradient(165deg,rgba(15,25,55,.9),rgba(30,15,60,.75));box-shadow:inset 0 0 60px rgba(120,200,255,.12),0 8px 32px rgba(0,0,0,.35);contain:paint}
     .tap-zone:focus-visible{box-shadow:0 0 0 3px rgba(93,230,255,.5),inset 0 0 60px rgba(120,200,255,.15)}
     .tap-zone:active{transform:scale(.992)}
     .tap-zone.tap-flash{animation:tapFlash .35s ease-out}
@@ -63,23 +64,31 @@
     .upgrade,.cmp,.talent,.skin,.quest{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);border-radius:12px;padding:8px}
     .upgrade .name,.talent .name,.skin .name{font-weight:700} .upgrade small,.cmp span,.small,.talent small,.skin small,.quest small{color:var(--muted);font-size:.86rem}
     .panel-title{margin:.05rem 0 .55rem}
-    .overlay{position:fixed;inset:0;background:rgba(3,4,14,.72);display:none;align-items:center;justify-content:center;padding:14px;z-index:20}
+    .overlay{position:fixed;inset:0;background:rgba(3,4,14,.72);display:none;align-items:center;justify-content:center;padding:14px;z-index:200}
     .overlay.open{display:flex}
     .modal{width:min(520px,100%);background:rgba(12,16,40,.96);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:14px}
-    .minigame-target{font-weight:900;font-size:1.4rem;margin:.4rem 0}
+    .minigame-target{font-weight:900;font-size:1.15rem;line-height:1.35;margin:.5rem 0}
+    .mini-choices{display:grid;gap:8px;margin-top:10px}
+    .mini-choices .btn{width:100%;text-align:left;justify-content:flex-start}
+    @media (prefers-reduced-motion:reduce){
+      .tap-zone.tap-flash,.avatar:before,.crystal-facet,.crystal-pulse{animation:none!important}
+      .ripple,.spark{animation-duration:.01ms!important}
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="topbar">
+  <header class="topbar-sticky" role="banner">
+    <div class="topbar-inner">
       <div class="card stat"><div class="k">💎 Aether</div><div class="v" id="aether">0</div></div>
       <div class="card stat"><div class="k">⚡ / sec</div><div class="v" id="aps">0</div></div>
       <div class="card stat"><div class="k">🛡️ Livello</div><div class="v" id="heroLevel">1</div></div>
       <div class="card stat"><div class="k">📖 Capitolo</div><div class="v" id="chapter">1</div></div>
       <div class="card stat"><div class="k">👹 Boss</div><div class="v" id="bossHp">-</div></div>
       <div class="card stat"><div class="k">✨ Eterni</div><div class="v" id="shards">0</div></div>
-    </section>
+    </div>
+  </header>
 
+  <main class="wrap">
     <section class="left">
       <article class="card hero">
         <div class="avatar" aria-hidden="true" id="avatar"><span class="avatar-emoji" id="avatarEmoji">🛡️</span></div>
@@ -156,16 +165,10 @@
     <div class="modal">
       <h3 class="panel-title">🧩 Prova del Varco</h3>
       <div id="miniPlaying">
-        <p class="small">Ripeti la sequenza prima che finisca il timer.</p>
-        <p class="minigame-target" id="miniSeq">-</p>
-        <p class="small">Input: <span id="miniInput">-</span> | Tempo: <span id="miniTimer">8.0</span>s</p>
-        <div id="miniKeys" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px">
-          <button class="btn good mini-key" data-k="A" type="button">A</button>
-          <button class="btn good mini-key" data-k="B" type="button">B</button>
-          <button class="btn good mini-key" data-k="C" type="button">C</button>
-          <button class="btn good mini-key" data-k="D" type="button">D</button>
-        </div>
-        <p class="small" id="miniMsg" style="margin-top:8px">Primo tentativo del capitolo: gratuito. Ritentativi: ✨ Eterni.</p>
+        <p class="small">Rispondi senza fretta. Sbagliando puoi ritentare (dopo il primo tentativo: ✨ Eterni).</p>
+        <p class="minigame-target" id="miniQuestion">-</p>
+        <div id="miniChoices" class="mini-choices"></div>
+        <p class="small" id="miniMsg" style="margin-top:8px">Nessun limite di tempo.</p>
       </div>
       <div id="miniFailed" style="display:none">
         <p class="small" id="miniFailMsg" style="color:var(--danger);font-weight:700">Prova fallita.</p>
@@ -204,9 +207,8 @@
       tapGainPreview: document.getElementById("tapGainPreview"),
       prestigeBtn: document.getElementById("prestigeBtn"),
       minigameOverlay: document.getElementById("minigameOverlay"),
-      miniSeq: document.getElementById("miniSeq"),
-      miniInput: document.getElementById("miniInput"),
-      miniTimer: document.getElementById("miniTimer"),
+      miniQuestion: document.getElementById("miniQuestion"),
+      miniChoices: document.getElementById("miniChoices"),
       miniMsg: document.getElementById("miniMsg"),
       miniPlaying: document.getElementById("miniPlaying"),
       miniFailed: document.getElementById("miniFailed"),
@@ -301,6 +303,17 @@
 
     const state = load();
 
+    let storyDirty = true;
+    let lbDirty = true;
+    let hudSlowTick = 0;
+
+    function normalizeSkins(){
+      if (!Array.isArray(state.unlockedSkins)) state.unlockedSkins = ["base"];
+      if (!state.unlockedSkins.includes("base")) state.unlockedSkins = ["base"].concat(state.unlockedSkins);
+      if (!skinsDef.some(s => s.id === state.activeSkin)) state.activeSkin = "base";
+    }
+    normalizeSkins();
+
     function clone(obj){
       return JSON.parse(JSON.stringify(obj));
     }
@@ -310,14 +323,16 @@
         const raw = localStorage.getItem("chronicles-idle-save-v1");
         if(!raw) return clone(defaultState);
         const parsed = JSON.parse(raw);
-        return {
+        const merged = {
           ...clone(defaultState),
           ...parsed,
           companions: { ...defaultState.companions, ...(parsed.companions || {}) },
           talents: { ...defaultState.talents, ...(parsed.talents || {}) },
           tapTop5: Array.isArray(parsed.tapTop5) ? parsed.tapTop5 : [],
+          unlockedSkins: Array.isArray(parsed.unlockedSkins) ? parsed.unlockedSkins : clone(defaultState).unlockedSkins,
           storyLog: Array.isArray(parsed.storyLog) ? parsed.storyLog : []
         };
+        return merged;
       }catch{
         return clone(defaultState);
       }
@@ -445,6 +460,7 @@
       const entry = { text, cls, time: Date.now() };
       state.storyLog.unshift(entry);
       if (state.storyLog.length > 35) state.storyLog.length = 35;
+      storyDirty = true;
     }
 
     function formatShortDate(ts){
@@ -486,6 +502,7 @@
       const list = [...(state.tapTop5 || []).map(e => ({ score: e.score, at: e.at })), { score: endedStreak, at: Date.now() }];
       list.sort((a, b) => b.score - a.score);
       state.tapTop5 = list.slice(0, 5);
+      lbDirty = true;
     }
 
     function retryTrialCost(){
@@ -499,7 +516,7 @@
       const free = !state.trialFreeUsed;
       if (!free && state.eternalShards < cost){
         pushStory(`Servono ${cost} Frammenti Eterni per ritentare la Prova del Varco.`, "line-evt");
-        update();
+        updateFull();
         return false;
       }
       if (!free) state.eternalShards -= cost;
@@ -525,7 +542,7 @@
       ui.miniPlaying.style.display = "block";
       ui.miniFailed.style.display = "none";
       pushStory("Hai rinviato la Prova del Varco. Ritenta quando vuoi (costo in Eterni).", "line-evt");
-      update();
+      updateFull();
     }
 
     function unlockCompanionIfNeeded(){
@@ -544,6 +561,7 @@
         state.chapterReady = false;
         state.chapterTrialPassed = false;
         state.trialFreeUsed = false;
+        state._forceShop = true;
         pushStory(storyChapters[Math.min(storyChapters.length - 1, state.chapter - 1)] || "Nuovo capitolo procedurale attivo.", "line-npc");
         pushStory("Boss del nuovo capitolo apparso.", "line-sys");
         resetBoss();
@@ -563,7 +581,7 @@
       state.aether -= cost;
       state[key] = next;
       pushStory(`Potenziato ${templates[key].label} al livello ${state[key]}.`, "line-sys");
-      update();
+      updateFull();
     }
 
     function buyCompanion(c){
@@ -573,7 +591,7 @@
       state.aether -= cost;
       state.companions[c.id] = owned + 1;
       pushStory(`${c.name} migliora il team (x${state.companions[c.id]}).`, "line-sys");
-      update();
+      updateFull();
     }
 
     function talentCost(talent){
@@ -587,13 +605,18 @@
       state.aether -= cost;
       state.talents[talent.id] += 1;
       pushStory(`Talento ${talent.name} aumentato al livello ${state.talents[talent.id]}.`, "line-sys");
-      update();
+      updateFull();
     }
 
     function buySkin(skin){
+      normalizeSkins();
+      if (!skin || !skin.id) return;
       if (state.unlockedSkins.includes(skin.id)){
-        state.activeSkin = skin.id;
-        update();
+        if (state.activeSkin !== skin.id){
+          state.activeSkin = skin.id;
+          pushStory(`Skin attiva: ${skin.name}.`, "line-sys");
+        }
+        updateFull();
         return;
       }
       if (state.eternalShards < skin.cost) return;
@@ -601,7 +624,7 @@
       state.unlockedSkins.push(skin.id);
       state.activeSkin = skin.id;
       pushStory(`Sbloccata skin ${skin.name}.`, "line-sys");
-      update();
+      updateFull();
     }
 
     function damageBoss(amount){
@@ -688,7 +711,11 @@
       const btn = document.createElement("button");
       btn.className = "btn alt";
       btn.type = "button";
-      btn.addEventListener("click", () => buySkin(s));
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        buySkin(s);
+      });
       row.append(left, btn);
       ui.skins.appendChild(row);
       return { s, left, btn };
@@ -714,28 +741,65 @@
     const skinRows = skinsDef.map(createSkinRow);
     const questRow = createQuestRow();
 
+    const ENIGMI = [
+      { q: "Cosa alimenta il portale e tutti i potenziamenti del mondo?", choices: ["L'oro", "L'Aether", "Il vento", "Il ferro"], correct: 1 },
+      { q: "Senza ali volo, senza denti mordo. Cosa sono?", choices: ["L'acqua", "Il tempo", "L'Aether", "Il vento"], correct: 3 },
+      { q: "Nel titolo del gioco, cosa custodisce Kael?", choices: ["La notte", "L'Alba", "Il sole", "Il gelo"], correct: 1 },
+      { q: "Quale pezzo dell'equip moltiplica tutta la produzione?", choices: ["Spada", "Armatura", "Cuore Arcano", "Solo i compagni"], correct: 2 },
+      { q: "I Frammenti Eterni si ottengono soprattutto con:", choices: ["Tap veloci", "Ascensione (prestigio)", "Solo missioni", "Chiudendo il gioco"], correct: 1 }
+    ];
+
+    function buildChapterMathPuzzle(){
+      const cap = Math.max(1, state.chapter | 0);
+      const val = cap + 2;
+      const poolWrong = [val + 1, val - 1, Math.max(1, cap - 1), cap + 3, val + 4].filter(x => x !== val && x > 0);
+      const wrong = [...new Set(poolWrong)];
+      while (wrong.length < 3) wrong.push(val + 9 + wrong.length);
+      const choices = [val, ...wrong.slice(0, 3)].sort(() => Math.random() - 0.5);
+      return {
+        q: `Enigma numerico: il tuo capitolo e ${cap}. Quanto fa ${cap} + 2?`,
+        choices,
+        correct: choices.indexOf(val)
+      };
+    }
+
+    function pickPuzzle(){
+      if (Math.random() < 0.35) return buildChapterMathPuzzle();
+      const pool = ENIGMI;
+      const r = pool[Math.floor(Math.random() * pool.length)];
+      const correctAnswer = r.choices[r.correct];
+      const choices = [...r.choices].sort(() => Math.random() - 0.5);
+      return { q: r.q, choices, correct: choices.indexOf(correctAnswer) };
+    }
+
     const minigame = {
       open: false,
       phase: "idle",
-      seq: "",
-      input: "",
-      timeLeft: 0
+      puzzle: null
     };
 
     function openMinigame(){
-      const keys = ["A","B","C","D"];
-      minigame.seq = Array.from({ length: 5 + Math.min(4, state.chapter) }, () => keys[Math.floor(Math.random() * keys.length)]).join("");
-      minigame.input = "";
-      minigame.timeLeft = Math.max(5, 10 - state.chapter * 0.22);
+      minigame.puzzle = pickPuzzle();
       minigame.phase = "playing";
       minigame.open = true;
       ui.miniPlaying.style.display = "block";
       ui.miniFailed.style.display = "none";
       ui.minigameOverlay.classList.add("open");
-      ui.miniSeq.textContent = minigame.seq;
-      ui.miniInput.textContent = "-";
-      ui.miniTimer.textContent = minigame.timeLeft.toFixed(1);
-      ui.miniMsg.textContent = "Primo tentativo: gratis. Ritentativi: costi in Eterni.";
+      ui.miniQuestion.textContent = minigame.puzzle.q;
+      ui.miniChoices.replaceChildren();
+      minigame.puzzle.choices.forEach((label, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn good";
+        btn.textContent = label;
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onPuzzlePick(idx);
+        });
+        ui.miniChoices.appendChild(btn);
+      });
+      ui.miniMsg.textContent = "Nessun limite di tempo. Scegli con calma.";
     }
 
     function failMinigame(msg){
@@ -756,19 +820,15 @@
       ui.miniFailed.style.display = "none";
       state.chapterTrialPassed = true;
       pushStory("Prova del Varco superata.", "line-sys");
-      update();
+      updateFull();
     }
 
-    function onMiniKey(k){
-      if (!minigame.open || minigame.phase !== "playing") return;
-      minigame.input += k;
-      ui.miniInput.textContent = minigame.input;
-      if (!minigame.seq.startsWith(minigame.input)){
-        failMinigame("Sequenza errata.");
-        return;
-      }
-      if (minigame.input === minigame.seq){
+    function onPuzzlePick(idx){
+      if (!minigame.open || minigame.phase !== "playing" || !minigame.puzzle) return;
+      if (idx === minigame.puzzle.correct){
         closeMinigameSuccess();
+      } else {
+        failMinigame("Risposta errata.");
       }
     }
 
@@ -789,7 +849,7 @@
       addAether(bonus);
       pushStory(`Missione completata: bonus ${Math.round((reward - 1) * 100)}% (${fmt(bonus)} Aether).`, "line-sys");
       newQuest(true);
-      update();
+      updateFull();
     }
 
     function updateQuestProgress(kind, amount){
@@ -819,7 +879,7 @@
       z.appendChild(rip);
       setTimeout(() => rip.remove(), 600);
       const n = 10 + Math.floor(state.comboStreak / 25);
-      for (let i = 0; i < Math.min(22, n); i++){
+      for (let i = 0; i < Math.min(14, n); i++){
         const sp = document.createElement("div");
         sp.className = "spark";
         sp.style.left = lx + "px";
@@ -846,7 +906,15 @@
       damageBoss(total * 0.55);
       state.taps += 1;
       updateQuestProgress("tap", 1);
-      update();
+      applyHud();
+      if (storyDirty){
+        renderStory();
+        storyDirty = false;
+      }
+      if (lbDirty){
+        renderLeaderboard();
+        lbDirty = false;
+      }
     }
 
     function updateOfflineProgress(){
@@ -860,11 +928,7 @@
       pushStory(`Rientro offline: ${Math.round(capped)}s, guadagno ${fmt(gain)} Aether.`, "line-sys");
     }
 
-    function update(){
-      tryAdvanceStory();
-      ensureDailyEvent();
-      chapterTrialCheck();
-
+    function applyHud(){
       const aps = idlePerSec();
       const level = heroLevel();
       const cProg = chapterProgress();
@@ -887,6 +951,27 @@
       const nextTap = tapTotalForStreak(effectiveStreakForNextTap());
       ui.tapGainPreview.textContent = "+" + fmt(nextTap) + " Aether per colpo";
 
+      if (Date.now() > state.quest.expiresAt){
+        newQuest(true);
+      }
+      const questPct = Math.min(1, state.quest.progress / state.quest.target);
+      questRow.left.innerHTML = `<div class="name">${state.quest.title}</div><small>${fmt(state.quest.progress)} / ${fmt(state.quest.target)} - bonus ${Math.round(state.quest.rewardMul * 100)}%</small>`;
+      questRow.btn.disabled = questPct < 1;
+
+      const prestigeGain = Math.floor(Math.sqrt(state.totalEarned / 1e6));
+      ui.prestigeBtn.textContent = `Ascendi ( +${prestigeGain} Frammenti Eterni )`;
+      ui.prestigeBtn.disabled = prestigeGain < 1;
+
+      if (ui.trialRow && ui.retryTrialBtn){
+        const showTrial = chapterProgress() >= 0.95 && !state.chapterTrialPassed;
+        ui.trialRow.style.display = showTrial ? "flex" : "none";
+        const c = retryTrialCost();
+        ui.retryTrialBtn.textContent = !state.trialFreeUsed ? `Prova del Varco (gratis)` : `Riprova Prova (${c} ✨)`;
+        ui.retryTrialBtn.disabled = !showTrial || (!!state.trialFreeUsed && state.eternalShards < c);
+      }
+    }
+
+    function applyShops(){
       for (const item of upgradeRows){
         const lvl = state[item.key];
         const cost = lvlCost(item.key, lvl + 1);
@@ -922,28 +1007,46 @@
         row.btn.textContent = active ? "Attiva" : unlocked ? "Equipaggia" : `Sblocca (${row.s.cost} FE)`;
         row.btn.disabled = !unlocked && state.eternalShards < row.s.cost;
       }
+    }
 
-      if (Date.now() > state.quest.expiresAt){
-        newQuest(true);
+    function updateFull(){
+      normalizeSkins();
+      tryAdvanceStory();
+      ensureDailyEvent();
+      chapterTrialCheck();
+      applyHud();
+      applyShops();
+      if (storyDirty){
+        renderStory();
+        storyDirty = false;
       }
-      const questPct = Math.min(1, state.quest.progress / state.quest.target);
-      questRow.left.innerHTML = `<div class="name">${state.quest.title}</div><small>${fmt(state.quest.progress)} / ${fmt(state.quest.target)} - bonus ${Math.round(state.quest.rewardMul * 100)}%</small>`;
-      questRow.btn.disabled = questPct < 1;
-
-      const prestigeGain = Math.floor(Math.sqrt(state.totalEarned / 1e6));
-      ui.prestigeBtn.textContent = `Ascendi ( +${prestigeGain} Frammenti Eterni )`;
-      ui.prestigeBtn.disabled = prestigeGain < 1;
-
-      renderStory();
-      renderLeaderboard();
-      if (ui.trialRow && ui.retryTrialBtn){
-        const showTrial = chapterProgress() >= 0.95 && !state.chapterTrialPassed;
-        ui.trialRow.style.display = showTrial ? "flex" : "none";
-        const c = retryTrialCost();
-        ui.retryTrialBtn.textContent = !state.trialFreeUsed ? `Prova del Varco (gratis)` : `Riprova Prova (${c} ✨)`;
-        ui.retryTrialBtn.disabled = !showTrial || (!!state.trialFreeUsed && state.eternalShards < c);
+      if (lbDirty){
+        renderLeaderboard();
+        lbDirty = false;
       }
       save();
+    }
+
+    function applyHudFast(){
+      tryAdvanceStory();
+      ensureDailyEvent();
+      chapterTrialCheck();
+      applyHud();
+      hudSlowTick++;
+      if (hudSlowTick >= 5 || state._forceShop){
+        hudSlowTick = 0;
+        normalizeSkins();
+        applyShops();
+        if (storyDirty){
+          renderStory();
+          storyDirty = false;
+        }
+        if (lbDirty){
+          renderLeaderboard();
+          lbDirty = false;
+        }
+        state._forceShop = false;
+      }
     }
 
     ui.tapZone.addEventListener("pointerdown", (e) => {
@@ -976,7 +1079,7 @@
       resetBoss();
       newQuest(true);
       pushStory(`Ascensione completata. Potere eterno +${gain}. Nuovo ciclo iniziato.`, "line-sys");
-      update();
+      updateFull();
     });
 
     if (ui.retryTrialBtn) ui.retryTrialBtn.addEventListener("click", () => beginTrialAttempt());
@@ -991,11 +1094,11 @@
       });
     }
 
-    for (const key of document.querySelectorAll(".mini-key")){
-      key.addEventListener("click", () => onMiniKey(key.dataset.k));
-    }
-
     function gameLoop(){
+      if (document.hidden){
+        state.lastTick = Date.now();
+        return;
+      }
       const now = Date.now();
       const delta = Math.min(2.5, (now - state.lastTick) / 1000);
       state.lastTick = now;
@@ -1012,14 +1115,7 @@
       if (state.bossHp <= 0.001){
         updateQuestProgress("boss", 1);
       }
-      if (minigame.open && minigame.phase === "playing"){
-        minigame.timeLeft -= delta;
-        ui.miniTimer.textContent = Math.max(0, minigame.timeLeft).toFixed(1);
-        if (minigame.timeLeft <= 0){
-          failMinigame("Tempo scaduto.");
-        }
-      }
-      update();
+      applyHudFast();
     }
 
     if (!state.storyLog.length){
@@ -1031,9 +1127,12 @@
       resetBoss();
     }
     updateOfflineProgress();
-    update();
-    setInterval(gameLoop, 200);
+    updateFull();
+    setInterval(gameLoop, 250);
     setInterval(save, 3000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) state.lastTick = Date.now();
+    });
     window.addEventListener("beforeunload", save);
   </script>
 </body>
